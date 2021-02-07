@@ -21,7 +21,7 @@ export function initializeDestinationDeck(ctx) {
         { from: 'Seattle', to: 'Vancouver', value: 5 },
         { from: 'Seattle', to: 'Vancouver', value: 5 },
         { from: 'Seattle', to: 'Vancouver', value: 5 },
-        { from: 'Seattle', to: 'V ancouver', value: 5 },
+        { from: 'Seattle', to: 'Vancouver', value: 5 },
         { from: 'Seattle', to: 'Vancouver', value: 5 },
         { from: 'Seattle', to: 'Vancouver', value: 5 },
         { from: 'Seattle', to: 'Vancouver', value: 5 },
