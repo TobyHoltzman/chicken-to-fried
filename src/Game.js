@@ -1,89 +1,82 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
-import { initializeDestinationDeck, initializeTrainDeck, initializeRoutes } from './helper/initializer.js';
-
-export const colors = {
-    RED: 0,
-    BLUE: 1,
-    GREEN: 2,
-    YELLOW: 3,
-    PINK: 4,
-    GRAY: 5,
-    MULTI: 6,
-};
-
-export const trainCards = [
-    { color: colors.RED },
-    { color: colors.BLUE },
-    { color: colors.GREEN },
-    { color: colors.YELLOW },
-    { color: colors.PINK },
-];
+import { colors, trainCards } from './helper/cards.js'
+import { initializeShipmentDeck, initializeChickenDeck, initializeRoutes } from './helper/initializer.js';
 
 
-export function drawFirstTrain(G, ctx, index) {
+
+export function drawFirstChicken(G, ctx, index) {
     if (index < 0) { // Drawing from deck
         const chicken = G.chickenDeck.pop();
         G.players[ctx.currentPlayer].chickens.push(chicken);
     }
     else {
-        const chicken = G.trainShown.splice(index, 1)[0];
+        const chicken = G.chickensShown.splice(index, 1)[0];
         G.players[ctx.currentPlayer].chickens.push(chicken);
         if (chicken.color === colors.MULTI) {
             ctx.events.endTurn();
         }
         const shownChicken = G.chickenDeck.pop();
-        G.trainShown.push(shownChicken);
+        G.chickensShown.push(shownChicken);
     }
+    ctx.events.setStage('drawSecondChicken');
 };
 
-export function drawSecondTrain(G, ctx, index) {
+export function drawSecondChicken(G, ctx, index) {
     if (index < 0) { // Drawing from deck
         const chicken = G.chickenDeck.pop();
         G.players[ctx.currentPlayer].chickens.push(chicken);
     }
     else {
-        const chicken = G.trainShown.splice(index, 1)[0];
+        const chicken = G.chickensShown.splice(index, 1)[0];
         if (chicken.color === colors.MULTI) {
             return INVALID_MOVE;
         }
         G.players[ctx.currentPlayer].chickens.push(chicken);
         const shownChicken = G.chickenDeck.pop();
-        G.trainShown.push(shownChicken);
+        G.chickensShown.push(shownChicken);
         ctx.events.endTurn();
     }
 }
 
-export function drawDestination(G, ctx, selections) {
+export function drawShipments(G, ctx) {
+    const player = G.players[ctx.currentPlayer];
+    player.shipmentChoices = G.shipmentDeck.splice(0, 3);
+    ctx.events.setStage('chooseShipments');
+}
+
+export function chooseShipments(G, ctx, selections) {
     if (selections.length === 0 || selections.length > 3) { 
         return INVALID_MOVE;
     }
     const player = G.players[ctx.currentPlayer];
     [0, 1, 2].forEach(choice => {
-        const shipment = player.shipmentChoices[i];
+        const shipment = player.shipmentChoices[choice];
         if (selections.includes(choice)) {
             player.shipments.push(shipment);
         }
         else {
             G.shipmentDeck.push(shipment)
-            ctx.Shuffle(G.shipmentDeck);
+            G.shipmentDeck = ctx.random.Shuffle(G.shipmentDeck);
         }
     });
 
-
+    player.shipmentChoices = [];
     ctx.events.endTurn();
 };
 
-export function claimRoute(G, ctx, routeIndex) {
-    const route = G.routes[routeIndex];
+export function claimRoute(G, ctx, routeID) {
+    const route = G.routes[routeID];
     const hand = G.players[ctx.currentPlayer].chickens;
     if (countTrainsOfColor(hand, route.color) <= route.length && G.players[ctx.currentPlayer].numChickens >= route.length) {
         G.players[ctx.currentPlayer].chickens = removeTrainsOfColor(hand, route.color, route.length);
-        G.routes[routeIndex].player = ctx.currentPlayer;
+        G.routes[routeID].player = ctx.currentPlayer;
         G.players[ctx.currentPlayer].numChickens -= route.length;
 
-        if (player.numChickens <= 3) {
+        if (G.players[ctx.currentPlayer].numChickens <= 2) {
             ctx.events.endPhase();
         }
+
+        ctx.events.endTurn();
     }
     else {
         return INVALID_MOVE;
@@ -97,7 +90,8 @@ export function countTrainsOfColor(hand, color) {
     return validCards.length;
 }
 
-export function canClaimRoute(hand, route) {
+export function canClaimRoute(G, hand, routeID) {
+    const route = G.routes[routeID];
     return countTrainsOfColor(hand, route.color) >= route.length;    
 }
 
@@ -107,21 +101,25 @@ export function removeTrainsOfColor(hand, color, length) {
 
 export const ChickenToFried = {
     setup: (ctx) => {
-        console.log(ctx)
-        const [ chickenDeck, trainShown, trainHand ] = initializeTrainDeck(ctx);
-        const [ shipmentDeck, shipments ] = initializeDestinationDeck(ctx);
+        console.log(ctx);
+        const [ chickenDeck, chickensShown, chickens ] = initializeChickenDeck(ctx);
+        const shipmentDeck = initializeShipmentDeck(ctx);
+        const players = Array(ctx.numPlayers).fill({
+            numChickens: 45,
+            chickenColor: colors.GRAY,
+            name: '',
+            chickens: chickens,
+            shipments: [],
+            shipmentChoices: [],
+        });
+        players.forEach((player, index) => {
+            player.chickens = chickens[index];
+        });
         return {
             shipmentDeck: shipmentDeck,
             chickenDeck: chickenDeck,
-            trainShown: trainShown,
-            players: Array(ctx.numPlayers).fill({
-                numChickens: 45,
-                chickenColor: colors.GRAY,
-                name: '',
-                chickens: trainHand,
-                shipments: shipments,
-                shipmentChoices: [],
-            }),
+            chickensShown: chickensShown,
+            players: players,
             routes: initializeRoutes(),
         }
     },
@@ -129,32 +127,35 @@ export const ChickenToFried = {
     turn: {
         stages: {
             move: {
-                moves: { drawFirstTrain, claimRoute, drawShipment }
+                moves: { drawFirstChicken, claimRoute, drawShipments }
             },
-            drawSecondTrain: {
-                moves: { drawSecondTrain } 
+            drawSecondChicken: {
+                moves: { drawSecondChicken } 
             },
-            drawShipment: {
-                moves: { drawDestination }
+            chooseShipments: {
+                moves: { chooseShipments }
             }
         }
     },
 
     phases: {
         draw: {
-
+            moves: { drawShipments },
+            start: true,
+            next: 'play'
         },
         play: {
-            endIf: isGameEnding
+            moves: { drawFirstChicken, drawShipments, claimRoute },
+            next: 'endgame'
         },
         endgame: {
-
+            moves: { claimRoute, drawShipments }
         }
     },
 
     moves: {
-        drawTrain,
-        drawDestination,
+        drawFirstChicken,
+        drawShipments,
         claimRoute
     }
 }
