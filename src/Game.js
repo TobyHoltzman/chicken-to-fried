@@ -1,5 +1,6 @@
 import { INVALID_MOVE } from 'boardgame.io/core';
-import { colors, trainCards } from './helper/cards.js'
+import { createContext } from 'react';
+import { colors } from './helper/cards.js'
 import { initializeShipmentDeck, initializeChickenDeck, initializeRoutes } from './helper/initializer.js';
 
 
@@ -66,37 +67,40 @@ export function chooseShipments(G, ctx, selections) {
 
 export function claimRoute(G, ctx, routeID) {
     const route = G.routes[routeID];
-    const hand = G.players[ctx.currentPlayer].chickens;
-    if (countTrainsOfColor(hand, route.color) <= route.length && G.players[ctx.currentPlayer].numChickens >= route.length) {
-        G.players[ctx.currentPlayer].chickens = removeTrainsOfColor(hand, route.color, route.length);
-        G.routes[routeID].player = ctx.currentPlayer;
-        G.players[ctx.currentPlayer].numChickens -= route.length;
-
-        if (G.players[ctx.currentPlayer].numChickens <= 2) {
-            ctx.events.endPhase();
-        }
-
-        ctx.events.endTurn();
+    const player = G.players[ctx.currentPlayer];
+    const hand = player.chickens;
+    if (canClaimRoute(hand, route)) {
+        ctx.events.setStage('chooseChickens');
     }
     else {
         return INVALID_MOVE;
     }
 }
 
-export function countTrainsOfColor(hand, color) {
-    const validCards = hand.filter((card) => {
-        return card.color === colors.MULTI || card.color === color || color === colors.GRAY;
-    });
-    return validCards.length;
-}
-
-export function canClaimRoute(G, hand, routeID) {
+export function chooseChickens(G, ctx, routeID, selections) {
+    // selections is a dict from colors to chosen cards
     const route = G.routes[routeID];
-    return countTrainsOfColor(hand, route.color) >= route.length;    
+    const player = G.players[ctx.currentPlayer];
+    const hand = player.chickens;
+
+    selections.keys.forEach(color => {
+        hand[color].splice(selections[color].length);
+    });
+    route.player = ctx.currentPlayer;
+    player.numChickens -= route.length;
+
+    if (G.players[ctx.currentPlayer].numChickens <= 2) {
+        ctx.events.endPhase();
+    }
+    ctx.events.endTurn();
 }
 
-export function removeTrainsOfColor(hand, color, length) {
-    return hand.filter((color))
+export function canClaimRoute(hand, route) {
+    if (route.color === colors.GRAY) {
+        return hand.flat().length >= route.length;
+    }
+
+    return hand[route.color].length + hand[colors.MULTI].length >= route.length;    
 }
 
 export const ChickenToFried = {
@@ -134,13 +138,25 @@ export const ChickenToFried = {
             },
             chooseShipments: {
                 moves: { chooseShipments }
-            }
+            },
+            chooseChickens: {
+                moves: { chooseChickens }
+            },
         }
     },
 
     phases: {
         draw: {
-            moves: { drawShipments },
+            onBegin: (_, ctx) => ctx.events.setActivePlayers({
+                all: 'draw',
+                next: { 1: ctx.events.endPhase }
+            }),
+            turn: {
+                stages: {
+                    draw: { moves: { drawShipments } },
+                    chooseShipments: { moves: { chooseShipments } }, 
+                },
+            },
             start: true,
             next: 'play'
         },
