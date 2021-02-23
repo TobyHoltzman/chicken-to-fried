@@ -3,10 +3,10 @@ import PropTypes from 'prop-types';
 
 import Deck from './components/Deck';
 
-const ChickenToFriedBoard = props => {
-    const playerID = 0;
-    const player = props.G.players[playerID];
-    console.log(player);
+const ChickenToFriedBoard = (props) => {
+    console.log('board props', props);
+    const player = props.G.players[props.playerID];
+    console.log('player', player);
     return (
         <div className="game">
             <div className="hand">

@@ -2,11 +2,9 @@ import React from 'react';
 
 const Deck = (props) => {
     console.log('props are ', props);
-    const { G, ctx, moves } = props.props;
+    const { G, ctx, moves, playerID } = props.props;
     console.log('G is', G);
     const { chickensShown } = G;
-
-    const playerID = '0';
 
     const cards = [];
     chickensShown.forEach((card, index) => {
@@ -17,7 +15,9 @@ const Deck = (props) => {
                 src={path}
                 onClick={() => {
                     if (ctx.currentPlayer === playerID) {
-                        if (ctx.activePlayers && ctx.activePlayers[playerID].includes("drawSecondChicken")) {
+                        if (ctx.activePlayers &&
+                                ctx.activePlayers[playerID] &&
+                                ctx.activePlayers[playerID].includes("drawSecondChicken")) {
                             moves.drawSecondChicken(index);
                         }
                         else {
@@ -36,7 +36,9 @@ const Deck = (props) => {
             src="/img/chicken-deck.png"
             onClick={() => {
                 if (ctx.currentPlayer === playerID) {
-                    if (ctx.activePlayers && ctx.activePlayers[playerID].includes("drawSecondChicken")) {
+                    if (ctx.activePlayers &&
+                            ctx.activePlayers[playerID] &&
+                            ctx.activePlayers[playerID].includes("drawSecondChicken")) {
                         moves.drawSecondChicken(-1);
                     }
                     else {
