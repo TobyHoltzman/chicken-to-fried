@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Deck from './components/Deck';
+import Hand from './components/Hand';
 
 const ChickenToFriedBoard = (props) => {
     console.log('board props', props);
@@ -9,17 +10,9 @@ const ChickenToFriedBoard = (props) => {
     console.log('player', player);
     return (
         <div className="game">
-            <div className="hand">
-                {[...Array(player.chickens)].map((value, index) => (
-                    <b>{player.chickens[index].length}</b>
-                ))
-                }
-            </div>
-            <div className="deck">
-                <Deck props={props}/>
-            </div>
+            <div className="deck"><Deck props={props}/></div>
+            <div className="hand"><Hand props={props}/></div>
         </div>
-        
     );
 };
 

@@ -13,6 +13,7 @@ const ChickenToFriedClient = Client({
 const App = () => (
     <div>
         <ChickenToFriedClient playerID="0"/>
+        <br/>
         <ChickenToFriedClient playerID="1"/>
     </div>
 );
