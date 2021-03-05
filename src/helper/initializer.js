@@ -47,8 +47,8 @@ export function initializeShipmentDeck(ctx) {
     let deck = [];
     for (let i = 0; i < 20; i++) {
         deck.push(
-            { from: ctx.random.Shuffle(cities)[0],
-                to: ctx.random.Shuffle(cities)[0],
+            { cityFrom: ctx.random.Shuffle(cities)[0],
+                cityTo: ctx.random.Shuffle(cities)[0],
                 value: ctx.random.D20()
             }
         );

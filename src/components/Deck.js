@@ -2,7 +2,7 @@ import React from 'react';
 
 const Deck = (props) => {
     console.log('props are ', props);
-    const { G, ctx, moves, playerID } = props.props;
+    const { G, ctx, moves, playerID } = props;
     console.log('G is', G);
     const { chickensShown } = G;
 
@@ -47,6 +47,15 @@ const Deck = (props) => {
                 }
             }}
             key={6}
+            />
+            <img
+            src="/img/shipment-deck.png"
+            onClick={() => {
+                if (ctx.currentPlayer === playerID) {
+                    moves.drawShipments();
+                }
+            }}
+            key={7}
             />
         </div>
     );

@@ -15,14 +15,17 @@ export const ChickenToFried = {
         console.log(ctx);
         const [ chickenDeck, chickensShown, chickens ] = initializeChickenDeck(ctx);
         const shipmentDeck = initializeShipmentDeck(ctx);
-        const players = Array(ctx.numPlayers).fill({
-            numChickens: 45,
-            chickenColor: colors.GRAY,
-            name: '',
-            chickens: chickens,
-            shipments: [],
-            shipmentChoices: [],
-        });
+        const players = [];
+        for(let i = 0; i < ctx.numPlayers; i++) {
+            players.push({
+                numChickens: 45,
+                chickenColor: colors.GRAY,
+                name: '',
+                chickens: chickens,
+                shipments: [],
+                shipmentChoices: [],
+            });
+        }
         players.forEach((player, index) => {
             player.chickens = chickens[index];
         });

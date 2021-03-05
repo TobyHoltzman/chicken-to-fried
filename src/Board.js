@@ -2,16 +2,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Deck from './components/Deck';
-import Hand from './components/Hand';
+import ChickenHand from './components/ChickenHand';
+import ShipmentHand from './components/ShipmentHand';
+import ShipmentChoices from './components/ShipmentChoices';
 
 const ChickenToFriedBoard = (props) => {
     console.log('board props', props);
-    const player = props.G.players[props.playerID];
-    console.log('player', player);
     return (
         <div className="game">
-            <div className="deck"><Deck props={props}/></div>
-            <div className="hand"><Hand props={props}/></div>
+            <div className="deck"><Deck {...props}/></div>
+            <div className="hand">
+                <ChickenHand {...props}/>
+                <br/>
+                <ShipmentHand {...props}/>
+            </div>
+            <div className="choices"><ShipmentChoices {...props}/></div>
         </div>
     );
 };
@@ -22,4 +27,4 @@ ChickenToFriedBoard.propTypes = {
     moves: PropTypes.any.isRequired,
 };
 
- export default ChickenToFriedBoard;
+export default ChickenToFriedBoard;

@@ -7,7 +7,8 @@ import { createContext } from 'react';
 export function drawFirstChicken(G, ctx, index) {
     if (index < 0) { // Drawing from deck
         const chicken = G.chickenDeck.pop();
-        G.players[ctx.currentPlayer].chickens.push(chicken);
+        G.players[ctx.currentPlayer].chickens[chicken.color].push(chicken);
+        ctx.events.setStage('drawSecondChicken');
     }
     else {
         const chicken = G.chickensShown.splice(index, 1)[0];
@@ -26,7 +27,7 @@ export function drawFirstChicken(G, ctx, index) {
 export function drawSecondChicken(G, ctx, index) {
     if (index < 0) { // Drawing from deck
         const chicken = G.chickenDeck.pop();
-        G.players[ctx.currentPlayer].chickens.push(chicken);
+        G.players[ctx.currentPlayer].chickens[chicken.color].push(chicken);
         ctx.events.endTurn();
     }
     else {
@@ -61,12 +62,16 @@ export function chooseShipments(G, ctx, selections) {
         }
         else {
             G.shipmentDeck.push(shipment)
-            G.shipmentDeck = ctx.random.Shuffle(G.shipmentDeck);
         }
     });
 
     player.shipmentChoices = [];
-    ctx.events.endTurn();
+    ctx.events.endStage();
+    if(!ctx.activePlayers ||
+        (Object.keys(ctx.activePlayers).length === 1 && ctx.playerID in ctx.activePlayers)) {
+        ctx.events.endTurn();
+    }
+    
 };
 
 
