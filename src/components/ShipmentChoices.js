@@ -3,22 +3,36 @@ import React from 'react';
 import Shipment from './Shipment';
 
 const ShipmentChoices = (props) => {
-    const { G, playerID } = props;
+    const { G, moves, playerID } = props;
 
     const cards = [];
     const shipmentChoices = G.players[playerID].shipmentChoices;
 
     const open = shipmentChoices.length > 0;
+    const [selectedShipments, setSelectedShipments] = React.useState([true, true, true])
 
+    const toggleSelected = (shipmentIndex) => {
+        selectedShipments[shipmentIndex] = !selectedShipments[shipmentIndex];
+        setSelectedShipments([...selectedShipments]);
+    }
+
+    const onConfirm = () => {
+        moves.chooseShipments(selectedShipments);
+        setSelectedShipments([true, true, true]);
+    }
     shipmentChoices.forEach((shipment, index) => {
+        const shipmentProps = {
+            selected: selectedShipments[index],
+            toggleSelected: toggleSelected,
+            shipmentIndex: index,
+            ...shipment,
+        }
         cards.push(
             <div>
-                <Shipment props={shipment} key={index}/>
+                <Shipment {...shipmentProps} key={index}/>
             </div>
-            
         );
     });
-    console.log('shipmentchoice', cards);
     
     return (
         <div className="shipmentChoices">
@@ -26,7 +40,7 @@ const ShipmentChoices = (props) => {
             open={open}
             >
                 <div>{cards}</div>
-                <Button color="primary">Confirm</Button>
+                <Button color="primary" onClick={onConfirm}>Confirm</Button>
             </Dialog>
         </div>
     );

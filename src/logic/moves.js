@@ -51,13 +51,13 @@ export function drawShipments(G, ctx) {
 }
 
 export function chooseShipments(G, ctx, selections) {
-    if (selections.length === 0 || selections.length > 3) { 
+    if (selections.length === 0 || selections.length > 3 || selections.every(x=>!x)) { 
         return INVALID_MOVE;
     }
     const player = G.players[ctx.currentPlayer];
-    [0, 1, 2].forEach(choice => {
-        const shipment = player.shipmentChoices[choice];
-        if (selections.includes(choice)) {
+    selections.forEach((choice, index) => {
+        const shipment = player.shipmentChoices[index];
+        if (choice) {
             player.shipments.push(shipment);
         }
         else {

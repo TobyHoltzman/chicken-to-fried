@@ -1,9 +1,17 @@
 import React from 'react';
-import { Card, CardContent, Checkbox, Typography } from '@material-ui/core';
+import { Card, CardContent, Checkbox, Switch, Typography } from '@material-ui/core';
 
 const Shipment = (props) => {
-    const { cityFrom , cityTo, value } = props.props;
-    console.log(props);
+    console.log('shipment props', props)
+    const { cityFrom, cityTo, value, selected, shipmentIndex, toggleSelected} = props;
+
+    const onSwitch = () => {
+        toggleSelected(shipmentIndex);
+    }
+
+    const shipmentSwitch = selected !== undefined ?
+        <Switch checked={selected} onChange={onSwitch}/> :
+        <div></div>;
 
     return (
         <Card className="shipment">
@@ -17,9 +25,8 @@ const Shipment = (props) => {
                 <Typography>
                     {value}
                 </Typography>
-                
             </CardContent>
-            <Checkbox/>
+            {shipmentSwitch}
         </Card>
 
     );
