@@ -60,7 +60,7 @@ export function initializeShipmentDeck(ctx) {
 
 export function initializeRoutes() {
     return [
-        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, player: null},
-        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, player: null}
+        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, playerID: null},
+        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, playerID: null}
     ]
 }

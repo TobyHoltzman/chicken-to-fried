@@ -7,7 +7,6 @@ import {
     drawShipments,
     chooseShipments,
     claimRoute,
-    chooseChickens
 } from './logic/moves.js';
 
 export const ChickenToFried = {
@@ -48,9 +47,6 @@ export const ChickenToFried = {
             },
             chooseShipments: {
                 moves: { chooseShipments }
-            },
-            chooseChickens: {
-                moves: { chooseChickens }
             },
         }
     },

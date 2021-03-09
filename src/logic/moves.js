@@ -76,40 +76,35 @@ export function chooseShipments(G, ctx, selections) {
 
 
 // CLAIM ROUTE
-export function claimRoute(G, ctx, routeID) {
+export function claimRoute(G, ctx, routeID, selections) {
+    // selections is a dict from colors to number of chosen cards
     const route = G.routes[routeID];
     const player = G.players[ctx.currentPlayer];
     const hand = player.chickens;
-    if (canClaimRoute(hand, route)) {
-        ctx.events.setStage('chooseChickens');
-    }
-    else {
+
+    if (!canClaimRoute(hand, route, player.numChickens)) {
         return INVALID_MOVE;
     }
-}
 
-export function chooseChickens(G, ctx, routeID, selections) {
-    // selections is a dict from colors to chosen cards
-    const route = G.routes[routeID];
-    const player = G.players[ctx.currentPlayer];
-    const hand = player.chickens;
-
-    selections.keys.forEach(color => {
-        hand[color].splice(selections[color].length);
+    Object.keys(selections).forEach(color => {
+        hand[color].splice(hand[color].length - selections[color]);
     });
-    route.player = ctx.currentPlayer;
+    route.playerID = ctx.currentPlayer;
     player.numChickens -= route.length;
 
-    if (G.players[ctx.currentPlayer].numChickens <= 2) {
+    if (player.numChickens <= 2) {
         ctx.events.endPhase();
     }
     ctx.events.endTurn();
 }
 
-export function canClaimRoute(hand, route) {
+export function canClaimRoute(hand, route, numChickens) {
+    if (route.playerID) {
+        return false;
+    }
     if (route.color === colors.GRAY) {
-        return hand.flat().length >= route.length;
+        return hand.flat().length >= route.length && numChickens >= route.length;
     }
 
-    return hand[route.color].length + hand[colors.MULTI].length >= route.length;    
+    return hand[route.color].length + hand[colors.MULTI].length >= route.length && numChickens >= route.length;    
 }
