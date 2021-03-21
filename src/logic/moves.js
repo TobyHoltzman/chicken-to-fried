@@ -82,7 +82,7 @@ export function claimRoute(G, ctx, routeID, selections) {
     const player = G.players[ctx.currentPlayer];
     const hand = player.chickens;
 
-    if (!canClaimRoute(hand, route, player.numChickens)) {
+    if (!canClaimRoute(selections, route, player.numChickens)) {
         return INVALID_MOVE;
     }
 
@@ -98,13 +98,16 @@ export function claimRoute(G, ctx, routeID, selections) {
     ctx.events.endTurn();
 }
 
-export function canClaimRoute(hand, route, numChickens) {
-    if (route.playerID) {
+export function canClaimRoute(selections, route, numChickens) {
+    const keys = Object.keys(selections);
+    const numCards = keys.reduce((prev, cur) => prev + selections[cur], 0);
+    if (route.playerID !== null || numChickens < route.length || numCards !== route.length) {
         return false;
     }
-    if (route.color === colors.GRAY) {
-        return hand.flat().length >= route.length && numChickens >= route.length;
-    }
-
-    return hand[route.color].length + hand[colors.MULTI].length >= route.length && numChickens >= route.length;    
+    const hasMulti = keys.includes(colors.MULTI.toString());
+    const hasColor = keys.includes(route.color.toString());
+    console.log(keys, numCards, hasMulti, hasColor);
+    return (route.color === colors.GRAY) ?
+        keys.length === 1 || (keys.length === 2 && hasMulti) :
+        (keys.length === 1 && (hasMulti || hasColor)) || (keys.length === 2 && hasMulti && hasColor);
 }
