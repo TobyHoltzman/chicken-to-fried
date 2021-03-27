@@ -64,3 +64,10 @@ export function initializeRoutes() {
         { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, playerID: null}
     ]
 }
+
+export function intializeCities() {
+    return [
+        { name: 'Vancouver', x: '50', y: '50' },
+        { name: 'Seattle', x: '100', y: '200' }
+    ]
+}

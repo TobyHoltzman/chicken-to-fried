@@ -5,11 +5,13 @@ import Deck from './components/Deck';
 import ChickenHand from './components/ChickenHand';
 import ShipmentHand from './components/ShipmentHand';
 import ShipmentChoices from './components/ShipmentChoices';
+import RouteMap from './components/RouteMap';
 
 const ChickenToFriedBoard = (props) => {
     console.log('board props', props);
     return (
         <div className="game">
+            <div classname="map"><RouteMap {...props}/></div>
             <div className="deck"><Deck {...props}/></div>
             <div className="hand">
                 <ChickenHand {...props}/>
