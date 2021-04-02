@@ -60,14 +60,15 @@ export function initializeShipmentDeck(ctx) {
 
 export function initializeRoutes() {
     return [
-        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, playerID: null},
-        { from: 'Vancouver', to: 'Seattle', length: 2, color: colors.GRAY, playerID: null}
+        { from: 0, to: 1, length: 2, color: colors.GRAY, playerID: null},
+        { from: 1, to: 2, length: 2, color: colors.GRAY, playerID: null}
     ]
 }
 
-export function intializeCities() {
+export function initializeCities() {
     return [
-        { name: 'Vancouver', x: '50', y: '50' },
-        { name: 'Seattle', x: '100', y: '200' }
+        { name: 'Vancouver', x: 50, y: 50 },
+        { name: 'Seattle', x: 100, y: 200 },
+        { name: 'Boston', x: 950, y: 200 }
     ]
 }

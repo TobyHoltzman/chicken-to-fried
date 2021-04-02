@@ -1,6 +1,6 @@
 
 import { colors } from './helper/cards.js'
-import { initializeShipmentDeck, initializeChickenDeck, initializeRoutes, intializeCities } from './helper/initializer.js';
+import { initializeShipmentDeck, initializeChickenDeck, initializeRoutes, initializeCities } from './helper/initializer.js';
 import {
     drawFirstChicken,
     drawSecondChicken,
@@ -34,7 +34,7 @@ export const ChickenToFried = {
             chickensShown: chickensShown,
             players: players,
             routes: initializeRoutes(),
-            cities: intializeCities(),
+            cities: initializeCities(),
         }
     },
 

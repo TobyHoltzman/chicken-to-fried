@@ -31,6 +31,7 @@ const RouteMap = (props) => {
     return (
         <svg width='1000' height='600' xmlns='http://www.w3.org/2000/svg'>
             <image href='/img/kfc_map.jpg' height='100%' x='0' y='0'/>
+            {routes}
             {cities}
         </svg>
     );
